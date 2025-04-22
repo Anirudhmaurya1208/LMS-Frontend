@@ -148,53 +148,55 @@ const AddCourse = () => {
   //     alert("Failed to add course.");
   //   }
   // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const courseDescription = quillRef.current.root.innerHTML;
-  
+
     const structuredChapters = chapters.map((chapter, index) => ({
-      chapterTitle: chapter.chapterTitle,
-      chapterOrder: chapter.chapterOrder,
-      chapterContent: chapter.chapterContent.map((lecture, lectureIndex) => ({
-        lectureTitle: lecture.lectureTitle,
-        lectureUrl: lecture.lectureUrl,
-        lectureDuration: lecture.lectureDuration,
-        isPreviewFree: lecture.isPreviewFree,
-        lectureOrder: lecture.lectureOrder ?? lectureIndex + 1,
-      }))
+        chapterTitle: chapter.chapterTitle,
+        chapterOrder: chapter.chapterOrder,
+        chapterContent: chapter.chapterContent.map((lecture, lectureIndex) => ({
+            lectureTitle: lecture.lectureTitle,
+            lectureUrl: lecture.lectureUrl,
+            lectureDuration: lecture.lectureDuration,
+            isPreviewFree: lecture.isPreviewFree,
+            lectureOrder: lecture.lectureOrder ?? lectureIndex + 1,
+        }))
     }));
-  
+
     const formData = new FormData();
     formData.append("courseTitle", courseTitle);
     formData.append("coursePrice", coursePrice);
     formData.append("discount", discount);
     formData.append("courseDescription", courseDescription);
-  
+
+    // Image check and append
     if (!image || !(image instanceof File)) {
-      alert("Image must be a valid file.");
-      return;
+        alert("Image must be a valid file.");
+        return;
     }
     formData.append("image", image);
+
+    // Append chapters as a JSON string
     formData.append("chapters", JSON.stringify(structuredChapters));
     formData.append("educatorId", educatorId);
-  
+
     // 🐛 Debug log
     for (const [key, value] of formData.entries()) {
-      console.log(key, value);
+        console.log(key, value);
     }
-  
+
     try {
-      const response = await axios.post("http://localhost:8080/api/courses", formData);
-      console.log("Course added:", response.data);
-      alert("Course added successfully!");
+        const response = await axios.post("http://localhost:8080/api/courses", formData);
+        console.log("Course added:", response.data);
+        alert("Course added successfully!");
     } catch (error) {
-      console.error("Error adding course:", error.response?.data || error.message);
-      alert("Failed to add course.");
+        console.error("Error adding course:", error.response?.data || error.message);
+        alert("Failed to add course.");
     }
-  };
-  
+};
+
   
   
 
